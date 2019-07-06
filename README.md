@@ -19,3 +19,6 @@ References
 1. https://mae.chab.in/archives/60167
 2. https://juejin.im/post/5bd698c7f265da0ae8015f12
 3. https://www.cnblogs.com/stone-lyl/p/9606917.html
+4. https://dotblogs.com.tw/wasichris/2018/08/30/003238
+5. http://kazupon.github.io/vue-i18n/installation.html#explanation-of-different-builds
+6. https://www.codercto.com/a/37195.html
