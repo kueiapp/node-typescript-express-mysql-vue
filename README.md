@@ -7,11 +7,11 @@ Build a Web App sample using Node.js and Vue in TypeScript and MySQL
 3. Test the code
 > npm run test
 * the script uses package node-dev to watch the code continoualy in modification
-3. Test the code in TypeScript
-> npm run dev
+3. Transpile to JavaScript for client side
+> npm run build-client
 * the script uses package nodemon to run TypeScript code directly
-4. Compile TypeScript to JavaScript for server-side and client side
-> npm run build-server or npm run build-client
+4. Compile TypeScript to JavaScript for server-side
+> npm run build-server
 * you need to set up tsconfig.json of TypeScript first
 ------------
 References
