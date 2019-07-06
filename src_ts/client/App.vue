@@ -34,7 +34,8 @@ import EventBus from './utils/EventBus'
 import $ from 'jquery'
 
 @Component({
-  components: { UserList }
+  components: { UserList },
+  // $_veeValidate: { validator: "new" }
 })
 export default class App extends Vue 
 {

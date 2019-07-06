@@ -22,7 +22,7 @@ connectionPool.getConnection(function (err, connection) {
         console.log('Connection failed！');
     }
     else {
-        console.log(connection);
+        console.log("connection successfally");
     }
 });
 exports.default = connectionPool;

@@ -20,19 +20,20 @@
                   <div class="form-group">
                     <label for="inputArticleID" class="col-lg-2 control-label">ArticleID</label>
                     <div class="col-lg-10">
-                      <input type="number" class="form-control" name="article_id" placeholder="Article ID">
+                      <input type="number" v-validate="'required|numeric'" class="form-control" name="article_id" placeholder="Article ID"><span>{{ errors.first('article_id') }}</span>
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="inputEmail" class="col-lg-2 control-label">Email</label>
                     <div class="col-lg-10">
-                      <input type="email" class="form-control" name="user_email" placeholder="Email">
+                      <!-- instantly show validation -->
+                      <input type="email" v-validate="'required|email'" class="form-control" name="user_email" placeholder="Email"><span>{{ errors.first('user_email') }}</span>
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="inputTitle" class="col-lg-2 control-label">Title</label>
                     <div class="col-lg-10">
-                      <input type="text" class="form-control" name="title" placeholder="Title">
+                      <input type="text" class="form-control" name="title" placeholder="Title" v-validate="'required|my-title|min:6'" ><span>{{ errors.first('title') }}</span>
                     </div>
                   </div>
                   <input class="btn btn-primary" @click="addArticle" value="Submit" />
@@ -66,12 +67,36 @@
 import Vue from 'vue';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import $ from 'jquery'
+// node-fetch cannot be used in client side
+// import nodefetch, { Request, Response, FetchError } from 'node-fetch'
 import { UserArticleStruct } from '../UserArticleStruct'
 import _ from 'underscore'
 import utils from '../utils/utils'
 import EventBus from '../utils/EventBus'
 
-// import HeroDetail from './components/HeroDetail.vue';
+// user VeeValidate for checking forms' inupt immediately
+import VeeValidate,{ Validator } from 'vee-validate';
+import zh_TW from 'vee-validate/dist/locale/zh_TW'
+import en from 'vee-validate/dist/locale/en'
+const config = {
+  // validate when input data or leave the input element
+  events: 'input|blur',
+  dictionary: { zh_TW, en }
+}
+Vue.use(VeeValidate, config);
+// customize validation rule
+// <v-validate="'my-title'">
+// @params: ( validator name, validator rules )
+Validator.extend('my-title', {
+  getMessage: field => {
+    return `Field ${field} doesn't contain the word 'love'!`;
+  },
+  // required, returns a boolean value
+  validate: value => {
+    return value.indexOf('love') !== -1;
+  }
+});
+
 @Component({
   components: {  }
 })
@@ -84,8 +109,7 @@ export default class UserList extends Vue
   popper = null;
 
 // life-cycle
-  created() 
-  {
+  created() {
     var self = this;
     EventBus.$on('searched', function(token:string){
       console.log(`got search token = ${token}`)
@@ -99,24 +123,22 @@ export default class UserList extends Vue
       self.articles = self.allArticles;
     })
 
-    this.getArticles();
+    // this.getArticles();
   }
 // methods
-  testBtnClicked() 
-  {
+  testBtnClicked() {
     console.log('change to Hello Vue')
     EventBus.$emit('title-changed', 'Hello Vue')
   }
 
-  getArticles() 
-  {
+  getArticles() {
     console.log('getArticles.....')
     var self = this;
     fetch("http://localhost:3000/api/article")
-      .then( function(res:Response) {
+      .then( function(res) {
         return res.json()
       })
-      .then( function(obj:any) {
+      .then( function(obj) {
         self.articles = obj;
         self.allArticles = obj;
         console.log('articles: ',self.articles)
@@ -125,28 +147,25 @@ export default class UserList extends Vue
         console.error(err)
       });
   }
-  addBtnClicked() 
-  {
+  addBtnClicked() {
     console.log("addBtnClicked.....")
     this.doAdding = true;
   }
-  closeBtnClicked() 
-  {
+  closeBtnClicked() {
     this.doAdding = false;
   }
-  addArticle() 
-  {
+  addArticle() {
     var formData = $('#form1').serialize(); // req.params: a=1&b=2&c=3
     console.log('addArticle in param types: ', formData)
   // native Fetch API
     let aid = $("input[name=article_id]").val() + "" ;
     let title = $("input[name=title]").val() + "";
     let email = $("input[name=user_email]").val() + "" ;
-    // checking
-      if( aid.length === 0 || title.length === 0 || email.length === 0 ){
+    // custom validation
+      if( aid.length === 0 || title.length === 0 || email.length === 0 ){ // length
         alert("Please type in data in all coloumns.")
       }
-      else if( !utils.isEmail(email) || !utils.isNumber(aid) ){
+      else if( !utils.isEmail(email) || !utils.isNumber(aid) ){ // types
        alert("Please type in with correct types.") 
       }
       else{
@@ -162,10 +181,10 @@ export default class UserList extends Vue
             "user_email": email
           })
         })
-        .then(function(response:Response) {
+        .then(function(response) {
           return response.json();
         })
-        .then(function(res:any) {
+        .then(function(res) {
           console.log('got response: ',res);
           if(res.code === 200){
             // insert to index zero
@@ -174,16 +193,14 @@ export default class UserList extends Vue
             self.allArticles.unshift(newdata)
             self.doAdding = false;
           }
+        })
+        .catch(function(err){
+          console.error(err)
         });
       }
     
   }
-  selectArticle() 
-  {
-
-  }
-  deleteArticle(data:UserArticleStruct) 
-  {
+  deleteArticle(data:UserArticleStruct) {
     console.log("delete: ",data)
     if( confirm('wanna delete it?') ){
       var self = this;
@@ -194,11 +211,11 @@ export default class UserList extends Vue
           },
           body: JSON.stringify(data)
       })
-      .then(function(res:Response)
+      .then(function(res)
       {
         return res.json()
       })
-      .then(function(res:any)
+      .then(function(res)
       {
         console.log(res);
         if(res.code === 200){
@@ -208,6 +225,9 @@ export default class UserList extends Vue
         else{
           alert("something wrong in db")
         }
+      })
+      .catch(function(err){
+        console.error(err)
       })
     }
     else{

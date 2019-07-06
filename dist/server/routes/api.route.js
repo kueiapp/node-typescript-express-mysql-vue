@@ -8,9 +8,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // import express from 'express';
 // import config from '../config/config.js';
-var express = require("express");
+var express_1 = __importDefault(require("express"));
 var setting = require("../config/setting");
-var router = express.Router();
+var router = express_1.default.Router();
 /*
 * GET localhost:[port]/api page.
 * parent route is /api
