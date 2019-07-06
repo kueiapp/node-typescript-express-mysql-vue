@@ -5,7 +5,7 @@ Build a Web App sample using Node.js and Vue in TypeScript and MySQL
 > npm install
 2. or you can also use <u><i>npm i PACKAGES -D</i></u> to install them for development manually
 3. Test the code
-> npm run test
+> npm run start-server
 * the script uses package node-dev to watch the code continoualy in modification
 3. Transpile to JavaScript for client side
 > npm run build-client
